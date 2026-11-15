@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- vPad's colours for YAML - the names below are coloured from the vShell theme at run time (Syntax.cs) -->
+<SyntaxDefinition name="YAML" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="#7F849C" fontStyle="italic"/>
+  <Color name="String" foreground="#A6E3A1"/>
+  <Color name="Number" foreground="#FAB387"/>
+  <Color name="Keyword" foreground="#89B4FA"/>
+  <Color name="Key" foreground="#89B4FA"/>
+  <Color name="Type" foreground="#F9E2AF"/>
+  <Color name="Punct" foreground="#9399B2"/>
+  <Color name="Variable" foreground="#F5C2E7"/>
+  <Color name="Heading" foreground="#89B4FA" fontWeight="bold"/>
+  <Color name="Bold" fontWeight="bold"/>
+  <Color name="Italic" fontStyle="italic"/>
+  <Color name="Code" foreground="#A6E3A1"/>
+  <Color name="Link" foreground="#89B4FA"/>
+  <Color name="Tag" foreground="#89B4FA"/>
+  <Color name="Attr" foreground="#F5C2E7"/>
+  <RuleSet>
+    <Span color="Comment" begin="(?&lt;=^|\s)#" />
+    <Span color="String"><Begin>"</Begin><End>"</End><RuleSet><Span begin="\\" end="." /></RuleSet></Span>
+    <Span color="String"><Begin>'</Begin><End>'</End></Span>
+    <Rule color="Punct">^(---|\.\.\.)\s*$</Rule>
+    <Rule color="Key">(?&lt;=^\s*(-\s+)?)[^\s#:'"\-][^:#]*?(?=\s*:(\s|$))</Rule>
+    <Rule color="Punct">(?&lt;=^\s*)-(?=\s|$)|:(?=\s|$)|[\[\]\{\},|&gt;]</Rule>
+    <Rule color="Variable">[&amp;\*][\w\-]+</Rule>
+    <Rule color="Keyword">\b(true|false|null|yes|no|on|off|True|False|Null|TRUE|FALSE|NULL)\b|~</Rule>
+    <Rule color="Number">(?&lt;![\w\.\-])-?\d+(\.\d+)?(?![\w\.\-])</Rule>
+  </RuleSet>
+</SyntaxDefinition>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- vPad's colours for JavaScript - the names below are coloured from the vShell theme at run time (Syntax.cs) -->
+<SyntaxDefinition name="JavaScript" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="#7F849C" fontStyle="italic"/>
+  <Color name="String" foreground="#A6E3A1"/>
+  <Color name="Number" foreground="#FAB387"/>
+  <Color name="Keyword" foreground="#89B4FA"/>
+  <Color name="Key" foreground="#89B4FA"/>
+  <Color name="Type" foreground="#F9E2AF"/>
+  <Color name="Punct" foreground="#9399B2"/>
+  <Color name="Variable" foreground="#F5C2E7"/>
+  <Color name="Heading" foreground="#89B4FA" fontWeight="bold"/>
+  <Color name="Bold" fontWeight="bold"/>
+  <Color name="Italic" fontStyle="italic"/>
+  <Color name="Code" foreground="#A6E3A1"/>
+  <Color name="Link" foreground="#89B4FA"/>
+  <Color name="Tag" foreground="#89B4FA"/>
+  <Color name="Attr" foreground="#F5C2E7"/>
+  <RuleSet>
+    <Span color="Comment" begin="//" />
+    <Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+    <Span color="String" multiline="true"><Begin>`</Begin><End>`</End>
+      <RuleSet><Span begin="\\" end="." /><Span color="Variable" begin="\$\{" end="\}" /></RuleSet></Span>
+    <Span color="String"><Begin>"</Begin><End>"</End><RuleSet><Span begin="\\" end="." /></RuleSet></Span>
+    <Span color="String"><Begin>'</Begin><End>'</End><RuleSet><Span begin="\\" end="." /></RuleSet></Span>
+    <Keywords color="Keyword">
+      <Word>async</Word><Word>await</Word><Word>break</Word><Word>case</Word><Word>catch</Word><Word>class</Word><Word>const</Word><Word>continue</Word>
+      <Word>default</Word><Word>delete</Word><Word>do</Word><Word>else</Word><Word>export</Word><Word>extends</Word><Word>finally</Word><Word>for</Word>
+      <Word>from</Word><Word>function</Word><Word>if</Word><Word>import</Word><Word>in</Word><Word>instanceof</Word><Word>let</Word><Word>new</Word>
+      <Word>of</Word><Word>return</Word><Word>static</Word><Word>super</Word><Word>switch</Word><Word>this</Word><Word>throw</Word><Word>try</Word>
+      <Word>typeof</Word><Word>var</Word><Word>void</Word><Word>while</Word><Word>yield</Word><Word>true</Word><Word>false</Word><Word>null</Word>
+      <Word>undefined</Word><Word>interface</Word><Word>type</Word><Word>enum</Word><Word>implements</Word><Word>private</Word><Word>public</Word>
+      <Word>protected</Word><Word>readonly</Word><Word>as</Word>
+    </Keywords>
+    <Keywords color="Type">
+      <Word>string</Word><Word>number</Word><Word>boolean</Word><Word>any</Word><Word>unknown</Word><Word>never</Word><Word>object</Word>
+    </Keywords>
+    <Rule color="Number">\b0[xX][0-9a-fA-F_]+\b|\b\d[\d_]*(\.\d+)?([eE][+\-]?\d+)?n?\b</Rule>
+    <Rule color="Punct">=&gt;|[\{\}\(\)\[\];,]</Rule>
+  </RuleSet>
+</SyntaxDefinition>
