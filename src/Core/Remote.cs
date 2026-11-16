@@ -111,6 +111,13 @@ namespace vPad.Core
             }
         }
 
+        /// <summary>Is there a working connection to this server now?</summary>
+        public static bool IsOpen(VTermConnection c)
+        {
+            SftpClient client;
+            lock (_lock) return c != null && _open.TryGetValue(c.Id, out client) && client.IsConnected;
+        }
+
         /// <summary>The open connection to this server (connecting, or connecting again).</summary>
         static SftpClient Client(VTermConnection c)
         {

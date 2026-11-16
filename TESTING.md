@@ -20,6 +20,10 @@ Test with a scratch settings folder so your own vPad is never touched: `set VPAD
 5. Close vPad, cut %APPDATA%\vPad\settings.json short (delete its last lines), start vPad: tabs, recent files and trusted servers are as at the save before; settings.broken-<time>.json holds the broken file; vpad.log says so. An empty folder (first start): as before.
 6. Update with an unsaved tab: Install and restart > "Save the changes?" - wait a minute, then Cancel: vPad stays open with the text. Close it later: the new version starts then. (The log: "still has a window open - waiting for it to close".)
 
+## 0.1.5: speed
+1. Leave three tabs open on a server, close vPad, switch the server off, then double-click a .txt in Explorer: the file is there at once; "Opening … from <server>…" shows for about 12 s once (not three times) and those tabs are left out. With the server on: its tabs come in a moment later, behind the file you opened; started with no file, the tab that was in front last time is in front again.
+2. A file over a million characters (a 20 MB log) with Ctrl+F open and a search with many matches: typing in the text is as quick as with the bar closed; the highlights come back 0.4 s after you stop. F3 / Enter / Replace right after typing still go to the right place. A small file: highlights follow every key, as before.
+
 ## 0.1.4: tests and test hooks
 1. `dotnet test tests\vPad.Tests`: passes.
 2. Start a built vPad.exe with VPAD_TEST_HOOKS=1 (and a scratch VPAD_DATA_DIR); `vSuite.Core\scripts\test-send.ps1 -ProcessId <pid> -Command "dump C:\temp\s.txt"`:

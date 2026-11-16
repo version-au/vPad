@@ -165,7 +165,37 @@ namespace vPad.Ui
             _target.TextChanged += TargetChanged;
         }
 
-        void TargetChanged(object sender, EventArgs e) { if (IsVisible) Search(false); }
+        /// <summary>
+        /// The text changed: look again. In a big file (over a million characters) not on every key - the whole text is copied and
+        /// searched each time, which made typing with the bar open crawl - but once the typing pauses; anything that uses the
+        /// matches meanwhile (Next, Replace) looks first (Fresh).
+        /// </summary>
+        void TargetChanged(object sender, EventArgs e)
+        {
+            if (!IsVisible || _target == null) return;
+            if (_target.Document.TextLength < 1000000) { Search(false); return; }
+            _stale = true;
+            _marks.Matches = null;      // the old places are wrong now: nothing lit up rather than the wrong text
+            if (_later == null)
+            {
+                _later = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
+                _later.Tick += (o, a) => Fresh();
+            }
+            _later.Stop();
+            _later.Start();
+        }
+
+        System.Windows.Threading.DispatcherTimer _later;
+        bool _stale;
+
+        /// <summary>The matches are for the text as it is now.</summary>
+        void Fresh()
+        {
+            if (_later != null) _later.Stop();
+            if (!_stale) return;
+            _stale = false;
+            if (IsVisible) Search(false);
+        }
 
         /// <summary>Ctrl+F (replace = Ctrl+H): open with the selected word, the find box ready.</summary>
         public void Open(bool replace)
@@ -219,6 +249,8 @@ namespace vPad.Ui
         /// <summary>Find every match; jump = select the first one after the caret (typing in the find box).</summary>
         void Search(bool jump)
         {
+            _stale = false;
+            if (_later != null) _later.Stop();
             _found = new List<Match>();
             if (_target != null)
             {
@@ -269,6 +301,7 @@ namespace vPad.Ui
         public void Next(bool forward)
         {
             if (!IsVisible) { Open(false); return; }
+            Fresh();
             if (_target == null || _found.Count == 0) return;
             Match pick;
             if (forward)
@@ -295,6 +328,7 @@ namespace vPad.Ui
         void ReplaceOne()
         {
             if (_target == null || _target.IsReadOnly) return;
+            Fresh();
             Match cur = _found.Find(m => m.Index == _target.SelectionStart && m.Length == _target.SelectionLength);
             if (cur == null) { Next(true); return; }
             _target.Document.Replace(cur.Index, cur.Length, ReplacementFor(cur));
@@ -305,7 +339,7 @@ namespace vPad.Ui
 
         void ReplaceAll()
         {
-            if (_target == null || _target.IsReadOnly || _found.Count == 0) return;
+            Fresh(); if (_target == null || _target.IsReadOnly || _found.Count == 0) return;
             // every match, not just the 10,000 the bar lights up
             Regex r = Pattern();
             if (r == null) return;

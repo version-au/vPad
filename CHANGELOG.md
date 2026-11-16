@@ -8,6 +8,8 @@
 - Replace all replaces every match - it stopped at 10,000 and said it was done.
 - A settings.json that can't be read is kept (settings.broken-…json) and the save before it is used - vPad no longer starts again from nothing and saves over it.
 - Installing an update while vPad asks "Save the changes?" waits for your answer instead of closing vPad after 20 seconds (vSuite.Core 1.0.40).
+- Starting vPad with a file no longer waits for last time's tabs on a server that is off - those come in afterwards, behind what you opened.
+- Typing in a very large file with the find bar open no longer crawls: it looks again when you pause.
 
 ## 0.1.4 · release
 - Behind the scenes: automated tests, test hooks (a test can drive vPad without the mouse or keyboard), and every build uses the newest shared library.

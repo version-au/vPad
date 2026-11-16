@@ -32,21 +32,40 @@ namespace vPad.Ui
             if (_s.RestoreTabs && _s.Tabs.Count > 0)
             {
                 OpenTab active = _s.Tabs.FirstOrDefault(t => t.Active);
+                // the files on this PC first, then what vPad was started with - and only then the servers' files: a server that's
+                // off takes 12 seconds to say so, and the file you double-clicked used to wait behind every one of its tabs
+                var remote = new List<OpenTab>();
                 foreach (OpenTab t in _s.Tabs.ToList())
                 {
-                    if (t.Server.Length > 0)
-                    {
-                        VTermConnection c = VTermConnections.Find(t.Server);
-                        // only servers that sign in without asking (a saved password or a key) - no questions at start-up
-                        if (c != null && (c.Auth != "Password" || c.Secret.Length > 0)) await OpenRemote(c, t.Path, t.Line, true);
-                    }
+                    if (t.Server.Length > 0) remote.Add(t);
                     else if (File.Exists(t.Path)) await OpenLocal(t.Path, t.Line, true);
                 }
-                if (active != null)
+                if (active != null && active.Server.Length == 0)
                 {
-                    DocTab a = _tabs.FirstOrDefault(d => active.Server.Length > 0 ? d.IsRemote && d.Server.Id == active.Server && d.RemotePath == active.Path : d.Is(active.Path, null, null));
+                    DocTab a = _tabs.FirstOrDefault(d => d.Is(active.Path, null, null));
                     if (a != null) Activate(a);
                 }
+                bool asked = r != null && r.Files.Count > 0;
+                if (r != null) Run(r);
+                if (_tabs.Count == 0 && remote.Count == 0) NewFile();
+
+                var away = new HashSet<string>();
+                foreach (OpenTab t in remote)
+                {
+                    if (away.Contains(t.Server)) continue;      // it didn't answer for its first tab: the others aren't waited for too
+                    VTermConnection c = VTermConnections.Find(t.Server);
+                    // only servers that sign in without asking (a saved password or a key) - no questions at start-up
+                    if (c == null || !(c.Auth != "Password" || c.Secret.Length > 0)) continue;
+                    DocTab front = _active;
+                    int before = _tabs.Count;
+                    await OpenRemote(c, t.Path, t.Line, true);
+                    if (_tabs.Count == before) { if (!Remote.IsOpen(c)) away.Add(t.Server); continue; }
+                    // it comes in behind what you're looking at - unless it was the one in front last time and you asked for nothing else
+                    bool itsTurn = t == active && !asked && (front == null || front.IsNew);
+                    if (!itsTurn && front != null && _tabs.Contains(front)) Activate(front);
+                }
+                if (_tabs.Count == 0) NewFile();
+                return;
             }
             if (r != null) Run(r);
             if (_tabs.Count == 0) NewFile();
