@@ -3,6 +3,15 @@
 Test with a scratch settings folder so your own vPad is never touched: `set VPAD_DATA_DIR=<scratch folder>` before starting
 `bin\Release\net10.0-windows\vPad.exe`. Servers reads vTerm's real settings.json (read only; `VTERM_DATA_DIR` points it elsewhere).
 
+## 0.1.5: saving never loses text
+1. `dotnet test tests\vPad.Tests`: passes (`AnsiSaysWhatItCantHold`).
+2. Open an ANSI file (the status line says ANSI - e.g. a Windows-1252 file with "café"), paste an emoji or "→", Ctrl+S: "Couldn't save …:
+   It's stored as ANSI, which can't hold "→" …" - the file on disk is unchanged and the tab still shows it as changed. Click ANSI on the
+   status line > UTF-8, Ctrl+S: saved, and the character is there when you open it again. Without such a character an ANSI file saves as ANSI as before.
+3. A save that can't write (`TextFile.Write`): the new text goes to a file beside it first, and a failure there (full disk, share gone)
+   stops before the real file is touched - it used to be written straight over. Only where the swap itself doesn't work (some network
+   shares) is the file written directly; if that fails too, the error says which .tmp file beside it holds what you were saving.
+
 ## 0.1.4: tests and test hooks
 1. `dotnet test tests\vPad.Tests`: passes.
 2. Start a built vPad.exe with VPAD_TEST_HOOKS=1 (and a scratch VPAD_DATA_DIR); `vSuite.Core\scripts\test-send.ps1 -ProcessId <pid> -Command "dump C:\temp\s.txt"`:

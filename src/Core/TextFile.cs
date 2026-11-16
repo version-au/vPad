@@ -138,6 +138,26 @@ namespace vPad.Core
             return all;
         }
 
+        /// <summary>
+        /// The first character this format can't store (ANSI only holds its code page's - an arrow, an emoji or another alphabet
+        /// would be saved as "?"). null = all of it fits.
+        /// </summary>
+        public static string Lost(string text, TextFormat format)
+        {
+            if (format.Encoding != "ANSI") return null;
+            try
+            {
+                var strict = (Encoding)Ansi.Clone();
+                strict.EncoderFallback = EncoderFallback.ExceptionFallback;
+                strict.GetByteCount(text);
+                return null;
+            }
+            catch (EncoderFallbackException ex)
+            {
+                return ex.CharUnknown != '\0' ? ex.CharUnknown.ToString() : new string(new[] { ex.CharUnknownHigh, ex.CharUnknownLow });
+            }
+        }
+
         /// <summary>Looks like a program or picture rather than text (NUL bytes near the start, and not UTF-16).</summary>
         public static bool LooksBinary(byte[] b)
         {
@@ -151,24 +171,30 @@ namespace vPad.Core
         public static void Write(string path, byte[] bytes)
         {
             string tmp = path + ".vpad-" + Guid.NewGuid().ToString("N").Substring(0, 6) + ".tmp";
+            bool keep = false;
             try
             {
-                File.WriteAllBytes(tmp, bytes);
+                File.WriteAllBytes(tmp, bytes);     // a full disk or a share that's gone stops here: the old file isn't touched
                 if (File.Exists(path))
                 {
                     FileAttributes a = File.GetAttributes(path);
                     if ((a & FileAttributes.ReadOnly) != 0) throw new UnauthorizedAccessException("The file is read-only.");
-                    File.Replace(tmp, path, null, true);
+                    try { File.Replace(tmp, path, null, true); }
+                    catch (IOException)
+                    {
+                        // File.Replace can't work on some network shares: write straight over it. If that fails too the old file
+                        // may be cut short, so the new text stays in the file beside it
+                        try { File.WriteAllBytes(path, bytes); }
+                        catch (IOException ex)
+                        {
+                            keep = true;
+                            throw new IOException(ex.Message + " What you were saving is in " + Path.GetFileName(tmp) + ", in the same folder.", ex);
+                        }
+                    }
                 }
                 else File.Move(tmp, path);
             }
-            catch (IOException)
-            {
-                // File.Replace can't work on some network shares: write straight over it
-                try { File.Delete(tmp); } catch { }
-                File.WriteAllBytes(path, bytes);
-            }
-            finally { try { if (File.Exists(tmp)) File.Delete(tmp); } catch { } }
+            finally { if (!keep) try { if (File.Exists(tmp)) File.Delete(tmp); } catch { } }
         }
     }
 }

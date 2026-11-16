@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+- An ANSI file with a character ANSI can't hold (an arrow, an emoji, another alphabet) isn't saved with "?" in its place any more - vPad says so and you choose UTF-8.
+- A save that fails part-way (a full disk, a share that drops) leaves the file as it was.
+
 ## 0.1.4 · release
 - Behind the scenes: automated tests, test hooks (a test can drive vPad without the mouse or keyboard), and every build uses the newest shared library.
 - Behind the scenes: saved passwords, the small forms and reading vTerm's connections are the shared library's (the same code as vTerm and vShell).

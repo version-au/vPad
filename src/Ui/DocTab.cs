@@ -316,6 +316,8 @@ namespace vPad.Ui
         public async Task<string> SaveAsync()
         {
             if (IsNew) return "It has no file yet.";
+            string lost = TextFile.Lost(Editor.Text, Format);
+            if (lost != null) return "It's stored as ANSI, which can't hold \"" + lost + "\" - it would be saved as \"?\". Click ANSI on the status line, choose UTF-8, and save again.";
             byte[] bytes = TextFile.Encode(Editor.Text, Format);
             Busy = true;
             try

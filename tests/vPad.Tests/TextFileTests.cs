@@ -65,6 +65,15 @@ namespace vPad.Tests
         }
 
         [Fact]
+        public void AnsiSaysWhatItCantHold()
+        {
+            var ansi = new TextFormat { Encoding = "ANSI" };
+            Assert.Null(TextFile.Lost("plain text", ansi));
+            Assert.Equal("😀", TextFile.Lost("fine until 😀 here", ansi));     // in no Windows code page
+            Assert.Null(TextFile.Lost("fine until 😀 here", new TextFormat()));  // UTF-8 holds everything
+        }
+
+        [Fact]
         public void MixedLineEndingsAreMadeTheFilesOwn()
         {
             var f = new TextFormat { LineEnding = "LF" };
