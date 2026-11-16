@@ -319,6 +319,8 @@ namespace vPad.Ui
             string lost = TextFile.Lost(Editor.Text, Format);
             if (lost != null) return "It's stored as ANSI, which can't hold \"" + lost + "\" - it would be saved as \"?\". Click ANSI on the status line, choose UTF-8, and save again.";
             byte[] bytes = TextFile.Encode(Editor.Text, Format);
+            // what's written is the text as it is now: anything typed while the write runs (a server, a slow share) isn't in it
+            ICSharpCode.AvalonEdit.Document.ITextSourceVersion written = Editor.Document.Version;
             Busy = true;
             try
             {
@@ -333,7 +335,11 @@ namespace vPad.Ui
                     await Task.Run(() => TextFile.Write(p, bytes));
                     try { DiskTime = File.GetLastWriteTimeUtc(p); } catch { }
                 }
-                Editor.Document.UndoStack.MarkAsOriginalFile();
+                // only when nothing changed meanwhile is the text on screen the saved one - otherwise the tab stays "changed"
+                // (closing asks, and the next save writes the rest)
+                ICSharpCode.AvalonEdit.Document.ITextSourceVersion now = Editor.Document.Version;
+                if (written == null || now == null || (written.BelongsToSameDocumentAs(now) && written.CompareAge(now) == 0))
+                    Editor.Document.UndoStack.MarkAsOriginalFile();
                 Redraw();
                 return null;
             }

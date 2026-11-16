@@ -306,11 +306,21 @@ namespace vPad.Ui
         void ReplaceAll()
         {
             if (_target == null || _target.IsReadOnly || _found.Count == 0) return;
-            int n = _found.Count;
+            // every match, not just the 10,000 the bar lights up
+            Regex r = Pattern();
+            if (r == null) return;
+            var all = new List<Match>();
+            try
+            {
+                foreach (Match m in r.Matches(_target.Text)) if (m.Length > 0) all.Add(m);
+            }
+            catch (RegexMatchTimeoutException) { _count.Text = "Took too long - nothing was replaced"; return; }
+            if (all.Count == 0) return;
+            int n = all.Count;
             _target.Document.BeginUpdate();
             try
             {
-                for (int i = _found.Count - 1; i >= 0; i--) _target.Document.Replace(_found[i].Index, _found[i].Length, ReplacementFor(_found[i]));
+                for (int i = all.Count - 1; i >= 0; i--) _target.Document.Replace(all[i].Index, all[i].Length, ReplacementFor(all[i]));
             }
             finally { _target.Document.EndUpdate(); }
             Search(false);

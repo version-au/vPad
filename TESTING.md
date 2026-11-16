@@ -12,6 +12,14 @@ Test with a scratch settings folder so your own vPad is never touched: `set VPAD
    stops before the real file is touched - it used to be written straight over. Only where the swap itself doesn't work (some network
    shares) is the file written directly; if that fails too, the error says which .tmp file beside it holds what you were saving.
 
+## 0.1.5: more ways a save could lose text; settings; updates
+1. `dotnet test tests\vPad.Tests`: passes (`SettingsFileTests`).
+2. Open a file on a server (or a slow share), Ctrl+S and keep typing while "Saving…" shows: when it says Saved the tab still has its changed dot; closing asks to save; Ctrl+S again and it is clean. Without typing meanwhile: clean straight away, as before.
+3. A server file in a folder you can write to: while it saves, a file <name>.vpad-xxxxxx.tmp is beside it and is gone afterwards. Cut the connection during a big save: the error says the file may be cut short and names the .tmp file that holds your text. A file in a folder you can't write to (/etc/hosts as its owner): saves in place as before (no .tmp). A full disk: "The server couldn't take the file … left as it was".
+4. A file with more than 10,000 of something (60,000 commas): Replace all "," with ";": "Replaced 60000" and none are left. The bar still lights up at most 10,000.
+5. Close vPad, cut %APPDATA%\vPad\settings.json short (delete its last lines), start vPad: tabs, recent files and trusted servers are as at the save before; settings.broken-<time>.json holds the broken file; vpad.log says so. An empty folder (first start): as before.
+6. Update with an unsaved tab: Install and restart > "Save the changes?" - wait a minute, then Cancel: vPad stays open with the text. Close it later: the new version starts then. (The log: "still has a window open - waiting for it to close".)
+
 ## 0.1.4: tests and test hooks
 1. `dotnet test tests\vPad.Tests`: passes.
 2. Start a built vPad.exe with VPAD_TEST_HOOKS=1 (and a scratch VPAD_DATA_DIR); `vSuite.Core\scripts\test-send.ps1 -ProcessId <pid> -Command "dump C:\temp\s.txt"`:

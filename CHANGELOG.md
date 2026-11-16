@@ -3,6 +3,11 @@
 ## 0.1.5
 - An ANSI file with a character ANSI can't hold (an arrow, an emoji, another alphabet) isn't saved with "?" in its place any more - vPad says so and you choose UTF-8.
 - A save that fails part-way (a full disk, a share that drops) leaves the file as it was.
+- Typing while a save is still running (a server, a slow share) no longer counts as saved - the tab stays marked as changed.
+- Saving a file on a server keeps what you were saving in a file beside it until the save has worked, so a save that stops part way can't leave you with neither.
+- Replace all replaces every match - it stopped at 10,000 and said it was done.
+- A settings.json that can't be read is kept (settings.broken-…json) and the save before it is used - vPad no longer starts again from nothing and saves over it.
+- Installing an update while vPad asks "Save the changes?" waits for your answer instead of closing vPad after 20 seconds (vSuite.Core 1.0.40).
 
 ## 0.1.4 · release
 - Behind the scenes: automated tests, test hooks (a test can drive vPad without the mouse or keyboard), and every build uses the newest shared library.

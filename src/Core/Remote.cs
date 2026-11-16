@@ -213,15 +213,46 @@ namespace vPad.Core
         {
             With(c, cl =>
             {
+                // Writing in place empties the file first, so a write that stops part way (the link drops, the disk is full) would
+                // leave it empty or cut short. So the new text goes into a file beside it first (when the folder allows one): if the
+                // real write then fails, that file stays and the error names it; when all is well it's removed.
+                string spare = null;
+                bool existed = false;
+                try { existed = cl.Exists(path); } catch { }
+                if (existed)
+                {
+                    string tmp = path + ".vpad-" + Guid.NewGuid().ToString("N").Substring(0, 6) + ".tmp";
+                    try
+                    {
+                        using (var s = cl.Open(tmp, FileMode.CreateNew, FileAccess.Write)) s.Write(bytes, 0, bytes.Length);
+                        try { cl.ChangePermissions(tmp, 384); } catch { }     // 0600: it may hold what the real file keeps private
+                        spare = tmp;
+                    }
+                    catch (SshConnectionException) { throw; }
+                    catch (ObjectDisposedException) { throw; }
+                    catch
+                    {
+                        // a folder that only lets this file be written (/etc …), or no room: no spare copy - and when there was no
+                        // room for it, there's none for the file either, so it's left as it is
+                        try { if (cl.Exists(tmp)) { cl.DeleteFile(tmp); if (bytes.Length > 0) spare = ""; } } catch { }
+                    }
+                    if (spare == "") throw new InvalidOperationException("The server couldn't take the file (is its disk full?). " + path + " was left as it was.");
+                }
                 try
                 {
                     using (var s = cl.Open(path, FileMode.Create, FileAccess.Write)) s.Write(bytes, 0, bytes.Length);
                 }
                 catch (SftpPermissionDeniedException)
                 {
+                    if (spare != null) try { cl.DeleteFile(spare); } catch { }      // nothing was touched
                     throw new InvalidOperationException("The server won't let " + (string.IsNullOrWhiteSpace(c.User) ? "you" : c.User) +
                                                         " write " + path + " (it belongs to another user, often root). Save a copy, or change it in vTerm with sudo.");
                 }
+                catch (Exception ex) when (spare != null)
+                {
+                    throw new InvalidOperationException(ex.Message + " The file on the server may be cut short - what you were saving is in " + spare + " there.", ex);
+                }
+                if (spare != null) try { cl.DeleteFile(spare); } catch { }
                 return true;
             });
         }
