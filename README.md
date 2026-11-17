@@ -12,7 +12,7 @@ Made with AvalonEdit (MIT), Markdig (BSD-2) and SSH.NET (MIT).
 
 ## Licence
 
-Copyright (C) 2026 Steven (version-au). vPad is free software: you can redistribute it and/or modify it under the terms of the
+Copyright (C) 2026 Steven Van Teylingen (version-au). vPad is free software: you can redistribute it and/or modify it under the terms of the
 GNU General Public License, version 3 - see [LICENSE](LICENSE). It comes with no warranty. The shared library vSuite.Core is MIT, and
 the parts by others are listed in [THIRD-PARTY.txt](THIRD-PARTY.txt).
 
