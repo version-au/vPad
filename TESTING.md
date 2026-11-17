@@ -107,3 +107,6 @@ Alt+Z (wrap) / Ctrl + wheel, Ctrl+= / Ctrl+- / Ctrl+0 (text size).
 
 **Installer** (only on a release build): installs to %LOCALAPPDATA%\Programs\vPad; "Edit with vPad" on a file opens it; vPad is in
 "Open with" for text files; uninstall offers to delete %APPDATA%\vPad.
+
+## 0.1.5 - the tab menu
+1. Right-click a tab (the one open, and another one): it becomes the open tab and its menu stays up (Close, Close the others, Move to a new window, Copy the path …) until you pick something or click away. It used to close straight away - the editor took the focus back after the menu opened.

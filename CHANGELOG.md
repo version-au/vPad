@@ -10,6 +10,7 @@
 - Installing an update while vPad asks "Save the changes?" waits for your answer instead of closing vPad after 20 seconds (vSuite.Core 1.0.40).
 - Starting vPad with a file no longer waits for last time's tabs on a server that is off - those come in afterwards, behind what you opened.
 - Typing in a very large file with the find bar open no longer crawls: it looks again when you pause.
+- A tab's right-click menu stays open (it closed as soon as it opened).
 
 ## 0.1.4 · release
 - Behind the scenes: automated tests, test hooks (a test can drive vPad without the mouse or keyboard), and every build uses the newest shared library.

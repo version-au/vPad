@@ -424,7 +424,8 @@ namespace vPad.Ui
                     Add(m, "", "Show in its folder", null, true, () => { try { System.Diagnostics.Process.Start("explorer.exe", "/select,\"" + d.Path + "\""); } catch { } });
                 Add(m, "", "Read it again", null, true, () => { var unused = Reload(d, true); });
             }
-            m.IsOpen = true;
+            // after Activate's own "focus the editor" (queued at Input) - opened before it, the menu lost the focus to the editor and closed
+            Dispatcher.BeginInvoke(new Action(() => { if (IsVisible) m.IsOpen = true; }), System.Windows.Threading.DispatcherPriority.ContextIdle);
         }
 
         /// <summary>A tab into a window of its own (at a screen point in DIPs, or beside this one).</summary>
