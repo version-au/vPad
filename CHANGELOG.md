@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.5 · pre-release
+## 0.1.5 · release
 - An ANSI file with a character ANSI can't hold (an arrow, an emoji, another alphabet) isn't saved with "?" in its place any more - vPad says so and you choose UTF-8.
 - A save that fails part-way (a full disk, a share that drops) leaves the file as it was.
 - Typing while a save is still running (a server, a slow share) no longer counts as saved - the tab stays marked as changed.
