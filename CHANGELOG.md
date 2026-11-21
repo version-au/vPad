@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+
+- The see-through background follows the window across monitors and past a screen's edge, and big windows drag smoothly (vSuite.Core 1.0.43).
+
 ## 0.1.5 · release
 - An ANSI file with a character ANSI can't hold (an arrow, an emoji, another alphabet) isn't saved with "?" in its place any more - vPad says so and you choose UTF-8.
 - A save that fails part-way (a full disk, a share that drops) leaves the file as it was.

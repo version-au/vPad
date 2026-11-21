@@ -3,6 +3,11 @@
 Test with a scratch settings folder so your own vPad is never touched: `set VPAD_DATA_DIR=<scratch folder>` before starting
 `bin\Release\net10.0-windows\vPad.exe`. Servers reads vTerm's real settings.json (read only; `VTERM_DATA_DIR` points it elsewhere).
 
+## 0.1.6: the glass across monitors
+1. With the window see-through (Blur, Frosted or the wallpaper as it is): drag it slowly from one monitor onto the next and back - smooth, each part showing its own monitor's wallpaper, moving with the window.
+2. Drag it half off a screen's edge: the background keeps moving with it (it used to stop at the edge).
+3. Drag it around one monitor: smooth; let go - it's live at once (hover highlights), text as sharp as before.
+
 ## 0.1.5: saving never loses text
 1. `dotnet test tests\vPad.Tests`: passes (`AnsiSaysWhatItCantHold`).
 2. Open an ANSI file (the status line says ANSI - e.g. a Windows-1252 file with "café"), paste an emoji or "→", Ctrl+S: "Couldn't save …:
