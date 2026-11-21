@@ -173,6 +173,8 @@ namespace vPad.Ui
             right.Children.Add(CapButton("", "Minimise", () => WindowState = WindowState.Minimized, 44));
             _maxBtn = CapButton("", "Maximise", ToggleMax, 44);
             right.Children.Add(_maxBtn);
+            // Windows 11's snap layouts menu when the pointer rests on it (only while Windows' setting is on - else the plain button)
+            vSuite.Ui.SnapLayouts.Attach(this, _maxBtn);
             Button close = CapButton("", "Close", Close, 44);
             close.SetResourceReference(StyleProperty, "vx.CloseButton");
             close.Height = 40;
